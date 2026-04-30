@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-5VGVXX2M');</script>
+<!-- End Google Tag Manager -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>K-Agent Entrance Exam</title>
+  
+  <!-- 카카오톡, SNS 공유 시 나타나는 미리보기(썸네일) 설정 -->
+  <meta property="og:title" content="K-Agent Entrance Exam">
+  <meta property="og:description" content="Welcome to Korea. Prove you have the basic 'Nunchi' to survive here.">
+  <!-- 구글 드라이브 썸네일 API를 활용한 확실한 다이렉트 링크 -->
+  <meta property="og:image" content="https://drive.google.com/thumbnail?id=1RMf-Zo5wuEVpfPa38CpKgITV46cjujqX&sz=w1200-h630">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:type" content="website">
+  
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="K-Agent Entrance Exam">
+  <meta name="twitter:description" content="Welcome to Korea. Prove you have the basic 'Nunchi' to survive here.">
+  <meta name="twitter:image" content="https://drive.google.com/thumbnail?id=1RMf-Zo5wuEVpfPa38CpKgITV46cjujqX&sz=w1200-h630">
+  
+  <!-- Tailwind CSS 로드 -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- React 및 ReactDOM 로드 -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  
+  <!-- Babel 로드 (JSX 문법을 브라우저가 읽게 해줌) -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- html2canvas 모듈 로드 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5VGVXX2M"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+  <!-- React 코드 시작 -->
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    // --- Global Styles ---
+    const STYLES = `
+      @import url('https://fonts.googleapis.com/css2?family=VT323&family=DotGothic16&display=swap');
+      
+      /* 전역 폰트 강제 적용 (픽셀 폰트로 통일) */
+      * { font-family: 'DotGothic16', 'VT323', monospace !important; }
+
+      body, html {
+        margin: 0; padding: 0; width: 100vw; height: 100vh; background-color: #000; overflow: hidden;
+      }
+      
+      .app-wrapper {
+        width: 100vw; height: 100dvh; display: flex; justify-content: center; align-items: center; background-color: #000;
+      }
+      
+      .app-container {
+        width: 100%; max-width: 480px; height: 100%; max-height: 100dvh;
+        position: relative; background-color: #050505; overflow: hidden; display: flex; flex-direction: column;
+        box-shadow: 0 0 40px rgba(0,0,0,0.8);
+      }
+      
+      @media (min-width: 640px) {
+        .app-container { height: 90vh; max-height: 850px; border: 2px solid rgba(57,255,20,0.5); border-radius: 12px; }
+      }
+
+      .shake-animation { animation: shake 0.2s cubic-bezier(.36,.07,.19,.97) both; }
+      @keyframes shake {
+        10%, 90% { transform: translate3d(-2px, 1px, 0); }
+        20%, 80% { transform: translate3d(3px, -2px, 0); }
+        30%, 50%, 70% { transform: translate3d(-4px, 2px, 0); }
+        40%, 60% { transform: translate3d(4px, -1px, 0); }
+      }
+
+      .stamp-animation { animation: stampDrop 0.15s ease-in forwards; }
+      @keyframes stampDrop {
+        0% { transform: scale(3) rotate(-20deg); opacity: 0; }
+        100% { transform: scale(1) rotate(-5deg); opacity: 0.95; }
+      }
+
+      .citation-slide-up { animation: slideUpCitation 0.8s 0.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; transform: translateY(100%); }
+      @keyframes slideUpCitation { to { transform: translateY(0); opacity: 1; } }
+
+      .scanline {
+        background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.15));
+        background-size: 100% 4px; position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 50;
+      }
+
+      .pp-shutter {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background-image: url('https://lh3.googleusercontent.com/d/1-I_NPuI2fvJKapYU8Hv2wLB1k4dSgHeE');
+        background-size: 100% 100%; background-position: center; background-repeat: no-repeat;
+        z-index: 9999; transform: translateY(-100%);
+        animation: slamShut 1.5s cubic-bezier(0.5, 0, 0.1, 1) forwards;
+      }
+      @keyframes slamShut {
+        0% { transform: translateY(-100%); }
+        80% { transform: translateY(0); }
+        90% { transform: translateY(-2%); }
+        100% { transform: translateY(0); }
+      }
+
+      .passport-scanner-line {
+        position: absolute; left: 0; width: 100%; height: 4px; background-color: #39ff14; box-shadow: 0 0 15px 2px #39ff14, 0 0 30px #39ff14; opacity: 0; z-index: 20;
+      }
+      .group:hover .passport-scanner-line, .group:active .passport-scanner-line {
+        animation: scan-passport 1.5s ease-in-out infinite alternate; opacity: 1;
+      }
+      @keyframes scan-passport { 0% { top: 0%; } 100% { top: calc(100% - 4px); } }
+
+      @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+      .passport-pop { animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+      @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+      .card-glow-effect { animation: intenseGlow 3s ease-in-out infinite; }
+      @keyframes intenseGlow {
+        0%, 100% { filter: drop-shadow(0 0 6px var(--glow-color)); }
+        50% { filter: drop-shadow(0 0 16px var(--glow-color)); }
+      }
+
+      .crt-overlay {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+        background-size: 100% 2px, 3px 100%; pointer-events: none; z-index: 150; animation: crtFlicker 0.15s infinite;
+      }
+      @keyframes crtFlicker { 0% { opacity: 0.95; } 5% { opacity: 0.85; } 10% { opacity: 0.95; } 15% { opacity: 1; } 100% { opacity: 1; } }
+      
+      .scrollbar-hide::-webkit-scrollbar { display: none; }
+      .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+      .pixel-icon {
+        display: inline-block;
+        width: 60px;
+        height: 80px;
+        background-size: cover;
+        background-repeat: no-repeat;
+        image-rendering: pixelated;
+      }
+    `;
+
+    const QUIZ_DATA = [
+      {
+        id: 1,
+        question: "You walk into a crowded cafe in Seoul and spot an empty table. What is the most 'Korean' way to reserve this seat while you order?",
+        options: [
+          "Yell 'This is my seat!' so everyone can hear.",
+          "Force one of your friends to stand guard.",
+          "Casually leave your smartphone or wallet on the table."
+        ],
+        answer: 2,
+        tip: "Korea has extremely high public trust. Leaving personal belongings is a completely safe and standard way to 'claim' a seat!"
+      },
+      {
+        id: 2,
+        question: "While waiting for the subway, you notice people perfectly lined up specifically at door '5-4'. Why?",
+        options: [
+          "It has the strongest air conditioning.",
+          "5-4 is considered a lucky number.",
+          "It aligns perfectly with the transfer stairs, saving exactly 30 seconds."
+        ],
+        answer: 2,
+        tip: "Welcome to the 'Pali-Pali' (hurry) culture! Navigation apps tell you the exact door for the fastest transfer to save time."
+      },
+      {
+        id: 3,
+        question: "Riding an escalator, you hear someone hurrying up from behind. Where should you stand?",
+        options: [
+          "Stand comfortably in the middle.",
+          "Stand on the left side to enjoy the view.",
+          "Stick to the right side to leave the left lane completely open."
+        ],
+        answer: 2,
+        tip: "The right side is for standing, and the left side is the 'passing lane'. Blocking the left might earn you a polite but stern sigh!"
+      },
+      {
+        id: 4,
+        question: "You're in an elevator, standing right in front of the buttons. To be a polite passenger, what should you do?",
+        options: [
+          "Carefully wipe and clean all the buttons.",
+          "Tap the 'Close' button as soon as everyone boards.",
+          "Wait quietly until the doors close automatically."
+        ],
+        answer: 1,
+        tip: "Closing the door quickly is considered good manners to save everyone's time. Don't be surprised if the 'Close' button's paint is completely worn off!"
+      },
+      {
+        id: 5,
+        question: "You've been seated at a restaurant for 10 minutes, but nobody brought you water. A sign says 'Water is self'. What does it mean?",
+        options: [
+          "Keep complaining until a staff member arrives.",
+          "Get a cup from the sterilizer and pour it yourself.",
+          "Grab a water bottle from the table next to yours."
+        ],
+        answer: 1,
+        tip: "'Self' means self-service! This efficient system keeps restaurants running fast and helps keep your food affordable."
+      }
+    ];
+
+    const RESULT_TIERS = {
+      5: { class: "Level 3. [Local Master]", code: "CODENAME: [GHOST PROTOCOL]", secret: `"Master the system of Seoul."\n\nForget Google Maps. Local map apps (Naver/Kakao) will guide you to the exact hidden alleys.\n\nGet the 'Climate Card' transit pass immediately. You can now navigate the city flawlessly like a true local ghost.`, color: "#39ff14", img: "https://lh3.googleusercontent.com/d/1iKj2Fgh_KO5nK3YZj0tIETcfT9wVyYd_" },
+      4: { class: "Level 2. [Explorer]", code: "CODENAME: [ZERO GRAVITY]", secret: `"Agents don't carry bags."\n\nHeavy luggage eats your stamina. Link the T-Locker at subway stations and use luggage delivery services.\n\nKeep your hands free—only use them to take photos and feel the vibrant Seoul energy.`, color: "#00d2ff", img: "https://lh3.googleusercontent.com/d/1y0LgJyknEmxFYSIWnss1T_2IMm4xo0to" },
+      3: { class: "Level 2. [Explorer]", code: "CODENAME: [ZERO GRAVITY]", secret: `"Agents don't carry bags."\n\nHeavy luggage eats your stamina. Link the T-Locker at subway stations and use luggage delivery services.\n\nKeep your hands free—only use them to take photos and feel the vibrant Seoul energy.`, color: "#00d2ff", img: "https://lh3.googleusercontent.com/d/1y0LgJyknEmxFYSIWnss1T_2IMm4xo0to" },
+      2: { class: "Level 1. [Trainee]", code: "CODENAME: [RESPAWN POINT]", secret: `"Your fortress is the 'CVS'."\n\nKorean Convenience Stores (CVS) are 24/7 supply depots. From emergency cash (ATM) to headache pills and great snacks, solve everything here.\n\nIf you see the 24/7 neon sign, you are safe.`, color: "#facc15", img: "https://lh3.googleusercontent.com/d/1kadHK48hxBffgRnrX6nEuKwMjx2lAJCW" },
+      1: { class: "Level 1. [Trainee]", code: "CODENAME: [RESPAWN POINT]", secret: `"Your fortress is the 'CVS'."\n\nKorean Convenience Stores (CVS) are 24/7 supply depots. From emergency cash (ATM) to headache pills and great snacks, solve everything here.\n\nIf you see the 24/7 neon sign, you are safe.`, color: "#facc15", img: "https://lh3.googleusercontent.com/d/1kadHK48hxBffgRnrX6nEuKwMjx2lAJCW" },
+      0: { class: "ENTRY DENIED", code: "TRAINING REQUIRED", secret: `Survival in Korea is tough without knowing the unwritten rules.\n\nComplete the training again and stand before the desk.`, color: "#ff003c", img: "" }
+    };
+
+    const FACES = {
+      "4": "https://lh3.googleusercontent.com/d/1TiwDaSWRUZbv2TurZ8Vqm_-FKfwlirNJ", "3": "https://lh3.googleusercontent.com/d/1oGzKgWr87ibeg5eOPO6xVk0FnssjFVfS", "2": "https://lh3.googleusercontent.com/d/1sK2hibdSSBv2Qv8PLae6Po2KcYiJcjw_", "1": "https://lh3.googleusercontent.com/d/1BpNtGxFzB3JKH6mDH6NQbzOAKRrEPqTU", "0": "https://lh3.googleusercontent.com/d/1xCa5YNhX62_SEE8qlfW2_7-T-f0exHUx", "-1": "https://lh3.googleusercontent.com/d/1gQYpBOvnboP9FMPZm9VJFfdebaOo-gSH", "-2": "https://lh3.googleusercontent.com/d/1fGICmj6qbi8XJpghyOWVsIwvy00fx62K", "-3": "https://lh3.googleusercontent.com/d/1GepJ0zkxc7BV131eQ4N_yhMkV3_sV4nH", "-4": "https://lh3.googleusercontent.com/d/1qPvfrOPi7QzRC8wV5xvaEux-mCXHxtzf", 
+    };
+
+    const IMG_MAIN_BG = "https://lh3.googleusercontent.com/d/1o0A2uJ0cuYmJ59cI8-NdfHp5UNDrOjUo"; 
+    const IMG_PASSPORT = "https://lh3.googleusercontent.com/d/1LzkTn0PbzF9UDrF3UPSyybUnC7TSxSN2";
+    const IMG_ARRESTED = "https://lh3.googleusercontent.com/d/1CD2AVzKb29HC-CZpgXoEDue2N6WE79ar"; 
+
+    const FALLBACK_NORMAL = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%232a2d2f'/%3E%3Cpath d='M30 80h40v20H30z' fill='%23666'/%3E%3Cpath d='M40 40h20v20H40z' fill='%23e0c0a0'/%3E%3Cpath d='M35 30h30v15H35z' fill='%23888'/%3E%3Cpath d='M42 48h5v5h-5zM53 48h5v5h-5z' fill='%23000'/%3E%3Cpath d='M46 55h8v2h-8z' fill='%23000'/%3E%3C/svg%3E`;
+    const FALLBACK_ANGRY = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%234a1d1f'/%3E%3Cpath d='M30 80h40v20H30z' fill='%23444'/%3E%3Cpath d='M40 40h20v20H40z' fill='%23e08080'/%3E%3Cpath d='M35 30h30v15H35z' fill='%23888'/%3E%3Cpath d='M40 45l7 3v-2l-7-3zM60 45l-7 3v-2l7-3z' fill='%23000'/%3E%3Cpath d='M42 49h5v4h-5zM53 49h5v4h-5z' fill='%23000'/%3E%3Cpath d='M45 56h10v4h-10z' fill='%23000'/%3E%3C/svg%3E`;
+
+    const PassportLocal = () => (
+      <svg className="pixel-icon drop-shadow-[0_4px_4px_rgba(57,255,20,0.5)]" viewBox="0 0 16 20" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2 1h12v18H2z" fill="#0b3b17" />
+        <path d="M4 3h8v1H4zM4 5h8v1H4z" fill="#15803d" />
+        <circle cx="8" cy="10" r="3" fill="#22c55e" />
+        <path d="M7 9h2v2H7z" fill="#166534" />
+        <path d="M4 15h8v1H4zM4 17h8v1H4z" fill="#15803d" />
+      </svg>
+    );
+
+    const PassportForeign = () => (
+      <svg className="pixel-icon drop-shadow-[0_4px_4px_rgba(59,130,246,0.5)]" viewBox="0 0 16 20" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2 1h12v18H2z" fill="#1e3a8a" />
+        <path d="M4 3h8v1H4zM4 5h8v1H4z" fill="#2563eb" />
+        <circle cx="8" cy="10" r="3" fill="#3b82f6" />
+        <path d="M7 9h2v2H7z" fill="#1d4ed8" />
+        <path d="M4 15h8v1H4zM4 17h8v1H4z" fill="#2563eb" />
+      </svg>
+    );
+
+    const TIME_LIMIT = 15;
+    const FAKE_ID_COUNT = 36; 
+    const SORT_ID_COUNT = 5;
+
+    const PixelSpeakerIcon = ({ isMuted }) => (
+      <svg className="w-5 h-5 md:w-6 md:h-6" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style={{ shapeRendering: 'crispEdges' }}>
+        <rect x="3" y="9" width="4" height="6" />
+        <rect x="7" y="7" width="2" height="10" />
+        <rect x="9" y="5" width="2" height="14" />
+        <rect x="11" y="3" width="2" height="18" />
+        {!isMuted && (<React.Fragment><rect x="15" y="9" width="2" height="6" /><rect x="18" y="6" width="2" height="12" /></React.Fragment>)}
+        {isMuted && (<React.Fragment><rect x="16" y="9" width="2" height="2" /><rect x="20" y="9" width="2" height="2" /><rect x="18" y="11" width="2" height="2" /><rect x="16" y="13" width="2" height="2" /><rect x="20" y="13" width="2" height="2" /></React.Fragment>)}
+      </svg>
+    );
+
+    function App() {
+      const [gameState, setGameState] = useState('hero'); 
+      const [currentIdx, setCurrentIdx] = useState(0);
+      const [score, setScore] = useState(0);
+      const [wrongCount, setWrongCount] = useState(0);
+      const [isShaking, setIsShaking] = useState(false);
+      const [stamp, setStamp] = useState(null);
+      const [showTip, setShowTip] = useState(false);
+      
+      const [isJailDropping, setIsJailDropping] = useState(false);
+      const [isArresting, setIsArresting] = useState(false);
+      const [cctvTime, setCctvTime] = useState("");
+      
+      const [isMuted, setIsMuted] = useState(true); // 기본 음소거 적용됨
+      const [timeLeft, setTimeLeft] = useState(TIME_LIMIT);
+      
+      const [faceScore, setFaceScore] = useState(0);
+
+      // [추가된 코드] 범용 이벤트 발송 및 중복 제어(sessionStorage) 함수
+      const fireTrackEvent = (eventName, params = {}, preventDuplicate = false) => {
+        if (preventDuplicate) {
+          const sessionKey = `gtm_fired_${eventName}`;
+          if (window.sessionStorage.getItem(sessionKey)) return; // 세션 내 이미 발송된 경우 중단
+          window.sessionStorage.setItem(sessionKey, 'true');
+        }
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+          event: eventName,
+          ...params
+        });
+      };
+
+      const [irisGamePlayed, setIrisGamePlayed] = useState(false);
+      const [irisGameState, setIrisGameState] = useState(''); 
+      const [irisTimeNow, setIrisTimeNow] = useState(0);
+      const [irisResult, setIrisResult] = useState(null);
+
+      const [sortGamePlayed, setSortGamePlayed] = useState(false);
+      const [sortGameState, setSortGameState] = useState(''); 
+      const [sortTimeLeft, setSortTimeLeft] = useState(8); 
+      const [sortSequence, setSortSequence] = useState([]);
+      const [sortCurrentIdx, setSortCurrentIdx] = useState(0);
+      const [sortResult, setSortResult] = useState(null);
+
+      const [fakeIdGamePlayed, setFakeIdGamePlayed] = useState(false);
+      const [fakeIdGameState, setFakeIdGameState] = useState(''); 
+      const [fakeIdTimeLeft, setFakeIdTimeLeft] = useState(5);
+      const [fakeIdPos, setFakeIdPos] = useState(0);
+      const [fakeIdResult, setFakeIdResult] = useState(null);
+
+      const [displayedText, setDisplayedText] = useState("");
+      const [textIndex, setTextIndex] = useState(0);
+      const [targetText, setTargetText] = useState("");
+      const [toastMsg, setToastMsg] = useState("");
+
+      const currentQuestion = QUIZ_DATA[currentIdx] || QUIZ_DATA[0];
+      const intentText = "Tourists only see the surface, but real agents use 'Nunchi' (the Korean art of reading the room). Whether you remain a stranger or are treated like a local depends entirely on your cultural sense.";
+
+      const isTextFinished = targetText.length <= textIndex;
+      const isTimeWarning = timeLeft <= 5;
+      const currentResultData = RESULT_TIERS[score] || RESULT_TIERS[0];
+
+      const playAudio = (type) => {
+        if (!isMuted && navigator.vibrate) {
+          if (type === 'pass') navigator.vibrate(50);
+          else if (type === 'stamp' || type === 'warning') navigator.vibrate([100, 50, 100]);
+          else if (type === 'slam') navigator.vibrate([50, 50, 50, 50, 50, 50, 400]); 
+          else if (type === 'click' || type === 'intro') navigator.vibrate(10);
+          else if (type === 'scan') navigator.vibrate([20, 50, 20, 50, 20]);
+        }
+
+        if (isMuted) return;
+
+        try {
+          const windowAudioCtx = window.AudioContext || window.webkitAudioContext;
+          const ctx = window.audioCtx || new windowAudioCtx();
+          window.audioCtx = ctx;
+          if (ctx.state === 'suspended') ctx.resume();
+          
+          const osc = ctx.createOscillator(); 
+          const gain = ctx.createGain();
+          osc.connect(gain); gain.connect(ctx.destination);
+          const now = ctx.currentTime;
+          
+          if (type === 'warning' || type === 'stamp') {
+             osc.type = 'square'; 
+             osc.frequency.setValueAtTime(150, now); 
+             gain.gain.setValueAtTime(0.1, now); 
+             gain.gain.linearRampToValueAtTime(0.01, now + 0.15);
+             osc.start(now); osc.stop(now + 0.15);
+          } else if (type === 'pass') {
+             osc.type = 'square'; 
+             osc.frequency.setValueAtTime(523.25, now); 
+             osc.frequency.setValueAtTime(783.99, now + 0.1); 
+             gain.gain.setValueAtTime(0.08, now); 
+             gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
+             osc.start(now); osc.stop(now + 0.3);
+          } else if (type === 'intro') {
+             osc.type = 'sine'; 
+             osc.frequency.setValueAtTime(440, now); 
+             osc.frequency.setValueAtTime(880, now + 0.1);
+             gain.gain.setValueAtTime(0.1, now); 
+             gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
+             osc.start(now); osc.stop(now + 0.2);
+          } else if (type === 'slam') {
+             osc.type = 'square'; 
+             osc.frequency.setValueAtTime(100, now); 
+             gain.gain.setValueAtTime(0.2, now); 
+             gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+             osc.start(now); osc.stop(now + 0.1);
+          } else if (type === 'slideUp') {
+             osc.type = 'triangle'; 
+             osc.frequency.setValueAtTime(300, now); 
+             osc.frequency.linearRampToValueAtTime(600, now + 0.1);
+             gain.gain.setValueAtTime(0.1, now); 
+             gain.gain.linearRampToValueAtTime(0.01, now + 0.1);
+             osc.start(now); osc.stop(now + 0.1);
+          } else if (type === 'click') {
+             osc.type = 'sine'; 
+             osc.frequency.setValueAtTime(600, now); 
+             gain.gain.setValueAtTime(0.1, now);
+             gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05); 
+             osc.start(now); osc.stop(now + 0.05);
+          }
+        } catch (e) {}
+      };
+
+      const getSASTTime = () => {
+         const now = new Date();
+         return new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Seoul', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }).format(now).replace(/\//g, '-');
+      };
+
+      useEffect(() => {
+         let timer;
+         if (gameState === 'arresting') {
+            setCctvTime(getSASTTime());
+            timer = setInterval(() => setCctvTime(getSASTTime()), 1000);
+         }
+         return () => clearInterval(timer);
+      }, [gameState]);
+
+      useEffect(() => {
+        if (wrongCount >= 5 && !isArresting) {
+          // [수정된 코드] 조기 탈락 전환 발송 (중복 방지 true)
+          fireTrackEvent('SubmitForm', {}, true);
+          setIsArresting(true);
+          triggerArrestSequence();
+        }
+      }, [wrongCount, isArresting]);
+
+      const triggerArrestSequence = () => {
+         setIsJailDropping(true); playAudio('slam');
+         setTimeout(() => { setIsJailDropping(false); setGameState('arresting'); }, 1500); 
+         setTimeout(() => setGameState('result_jail'), 4500);
+      };
+
+      useEffect(() => {
+        if (gameState === 'result_jail' || gameState === 'result') playAudio('slideUp');
+      }, [gameState]);
+
+      useEffect(() => {
+        if (gameState === 'intent') { setTargetText(intentText); setDisplayedText(""); setTextIndex(0); } 
+        else if (gameState === 'quiz' && !showTip) { setTargetText(currentQuestion.question); setDisplayedText(""); setTextIndex(0); setTimeLeft(TIME_LIMIT); }
+      }, [gameState, currentIdx, showTip]);
+
+      useEffect(() => {
+        if ((gameState === 'intent' || gameState === 'quiz') && !showTip && targetText && !isTextFinished) {
+          const timer = setTimeout(() => { setDisplayedText(prev => prev + targetText[textIndex]); setTextIndex(textIndex + 1); }, 25);
+          return () => clearTimeout(timer);
+        }
+      }, [textIndex, targetText, gameState, showTip, isTextFinished]);
+
+      useEffect(() => {
+        let timer;
+        if (gameState === 'quiz' && stamp === null && !showTip && isTextFinished) {
+          timer = setInterval(() => { setTimeLeft(prev => { if (prev <= 1) { clearInterval(timer); handleTimeOut(); return 0; } return prev - 1; }); }, 1000);
+        }
+        return () => clearInterval(timer);
+      }, [gameState, stamp, showTip, textIndex, targetText, isTextFinished]);
+
+      useEffect(() => {
+         let timer;
+         if (gameState === 'irisgame' && irisGameState === 'playing') timer = setInterval(() => setIrisTimeNow(Date.now()), 30);
+         return () => clearInterval(timer);
+      }, [gameState, irisGameState]);
+
+      useEffect(() => {
+        let timer;
+        if (gameState === 'sortgame' && sortGameState === 'playing' && sortResult === null) {
+           timer = setInterval(() => { 
+             setSortTimeLeft(prev => { 
+               if (prev <= 1) { clearInterval(timer); handleSortTimeout(); return 0; } 
+               return prev - 1; 
+             }); 
+           }, 1000);
+        }
+        return () => clearInterval(timer);
+      }, [gameState, sortGameState, sortResult]);
+      
+      useEffect(() => {
+        let timer;
+        if (gameState === 'fakeidgame' && fakeIdGameState === 'playing' && fakeIdResult === null) {
+           timer = setInterval(() => { setFakeIdTimeLeft(prev => { if (prev <= 1) { clearInterval(timer); handleFakeIdTimeout(); return 0; } return prev - 1; }); }, 1000);
+        }
+        return () => clearInterval(timer);
+      }, [gameState, fakeIdGameState, fakeIdResult]);
+
+      const processAnswerFeedback = (isCorrect) => {
+        if (isCorrect) { setScore(s => s + 1); setStamp('pass'); setFaceScore(prev => Math.min(prev + 1, 4)); playAudio('pass'); } 
+        else { setWrongCount(w => w + 1); setStamp('warning'); setFaceScore(prev => Math.max(prev - 1, -4)); playAudio('warning'); }
+        setIsShaking(true); setTimeout(() => setIsShaking(false), 200); setTimeout(() => setShowTip(true), 1200); 
+      };
+
+      const handleTimeOut = () => processAnswerFeedback(false);
+      const handleOptionClick = (idx) => { if (!stamp) { playAudio('click'); processAnswerFeedback(idx === currentQuestion.answer); } };
+
+      const handleNext = () => {
+        playAudio('intro');
+        if (wrongCount >= 5) return; 
+        if (currentIdx === 0 && !irisGamePlayed) {
+          setIrisGamePlayed(true); setGameState('irisgame'); setIrisGameState('intro');
+          setTimeout(() => setIrisGameState('playing'), 2000); return;
+        }
+        if (currentIdx === 1 && !sortGamePlayed) {
+          setSortGamePlayed(true); setGameState('sortgame'); setSortGameState('intro');
+          const seq = Array.from({length: SORT_ID_COUNT}, () => Math.random() > 0.5 ? 'local' : 'foreign');
+          setSortSequence(seq); setSortCurrentIdx(0); setTimeout(() => { setSortGameState('playing'); setSortTimeLeft(8); }, 2000); return;
+        }
+        if (currentIdx === 3 && !fakeIdGamePlayed) {
+           setFakeIdGamePlayed(true); setGameState('fakeidgame'); setFakeIdGameState('intro'); 
+           setFakeIdPos(Math.floor(Math.random() * FAKE_ID_COUNT)); setTimeout(() => { setFakeIdGameState('playing'); setFakeIdTimeLeft(5); }, 2000); return;
+        }
+        if (currentIdx === QUIZ_DATA.length - 1) {
+          // [수정된 코드] 정상 통과 전환 발송 (중복 방지 true)
+          fireTrackEvent('SubmitForm', {}, true);
+
+          if (score === 0) { 
+            if (!isArresting) { setIsArresting(true); triggerArrestSequence(); } 
+          } else {
+            setGameState('result');
+          }
+        } else { 
+          setStamp(null); setShowTip(false); setCurrentIdx(currentIdx + 1); 
+        }
+      };
+
+      const handleIrisClick = () => {
+         if (irisGameState !== 'playing') return; 
+         playAudio('click');
+         const currentPos = 50 + 45 * Math.sin(irisTimeNow / 300);
+         if (currentPos >= 30 && currentPos <= 70) { setIrisResult('success'); playAudio('pass'); setFaceScore(prev => Math.min(prev + 1, 4)); } 
+         else { setIrisResult('fail'); playAudio('warning'); setFaceScore(prev => Math.max(prev - 1, -4)); setIsShaking(true); setTimeout(() => setIsShaking(false), 200); }
+         setIrisGameState('result'); setTimeout(() => resumeQuizAfterGame(), 2000);
+      };
+
+      const handleSortClick = (type) => {
+         if (sortGameState !== 'playing' || sortResult !== null) return; 
+         const isCorrect = type === sortSequence[sortCurrentIdx];
+         
+         if (isCorrect) {
+            if (sortCurrentIdx + 1 >= SORT_ID_COUNT) { 
+                setSortGameState('result'); setSortResult('success'); playAudio('pass'); setFaceScore(prev => Math.min(prev + 1, 4)); setTimeout(() => resumeQuizAfterGame(), 2000); 
+            } else { 
+                playAudio('click');
+                setSortCurrentIdx(prev => prev + 1); 
+            }
+         } else { 
+             setSortGameState('result'); setSortResult('fail'); playAudio('warning'); setFaceScore(prev => Math.max(prev - 1, -4)); setIsShaking(true); setTimeout(() => setIsShaking(false), 200); setTimeout(() => resumeQuizAfterGame(), 2000); 
+         }
+      };
+      
+      const handleSortTimeout = () => { 
+         if(sortResult !== null || sortGameState !== 'playing') return;
+         setSortGameState('result'); setSortResult('fail'); playAudio('warning'); setFaceScore(prev => Math.max(prev - 1, -4)); setIsShaking(true); setTimeout(() => setIsShaking(false), 200); setTimeout(() => resumeQuizAfterGame(), 2000); 
+      };
+
+      const handleFakeIdClick = (isFake) => {
+         if (fakeIdGameState !== 'playing' || fakeIdResult !== null) return; 
+         playAudio('click');
+         if (isFake) { setFakeIdGameState('result'); setFakeIdResult('success'); playAudio('pass'); setFaceScore(prev => Math.min(prev + 1, 4)); } 
+         else { setFakeIdGameState('result'); setFakeIdResult('fail'); playAudio('warning'); setFaceScore(prev => Math.max(prev - 1, -4)); setIsShaking(true); setTimeout(() => setIsShaking(false), 200); }
+         setTimeout(() => resumeQuizAfterGame(), 2000);
+      };
+      
+      const handleFakeIdTimeout = () => { 
+          if(fakeIdResult !== null || fakeIdGameState !== 'playing') return;
+          setFakeIdGameState('result'); setFakeIdResult('fail'); playAudio('warning'); setFaceScore(prev => Math.max(prev - 1, -4)); setIsShaking(true); setTimeout(() => setIsShaking(false), 200); setTimeout(() => resumeQuizAfterGame(), 2000); 
+      };
+
+      const resumeQuizAfterGame = () => { if (wrongCount >= 5) return; setGameState('quiz'); setStamp(null); setShowTip(false); setCurrentIdx(currentIdx + 1); };
+
+      const getInspectorImage = () => {
+        const clamped = Math.max(-4, Math.min(4, faceScore));
+        return FACES[clamped.toString()];
+      };
+
+      const getFallbackImage = () => faceScore < 0 ? FALLBACK_ANGRY : FALLBACK_NORMAL;
+
+      const copyToClipboard = (text) => {
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.style.position = 'absolute';
+        textArea.style.left = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+          document.execCommand('copy');
+        } catch (err) {
+          console.error('Copy failed', err);
+        }
+        document.body.removeChild(textArea);
+      };
+
+      const handleShareLink = () => {
+         playAudio('click');
+         fireTrackEvent('Share', { method: 'copy_link' }, false); // [수정된 코드] Share 이벤트 발송
+         copyToClipboard(window.location.href);
+         setToastMsg("Link copied to clipboard!");
+         setTimeout(() => setToastMsg(""), 3000);
+      };
+
+      const handleSNSShare = (platform) => {
+        playAudio('click'); 
+        fireTrackEvent('Share', { method: platform }, false); // [수정된 코드] SNS Share 이벤트 발송
+        const rawUrl = window.location.href; 
+        const text = encodeURIComponent("Check out my K-SURVIVAL TEST results!");
+        const url = encodeURIComponent(rawUrl);
+
+        copyToClipboard(rawUrl); 
+        setToastMsg("Link copied! Redirecting...");
+        
+        setTimeout(() => {
+          setToastMsg("");
+          switch(platform) {
+            case 'ig': 
+              window.open("https://www.instagram.com/", "_blank"); 
+              break;
+            case 'fb': 
+              window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, "_blank"); 
+              break;
+            case 'x': 
+              window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, "_blank"); 
+              break;
+            case 'tt': 
+              window.open("https://www.tiktok.com/", "_blank"); 
+              break;
+            default: break;
+          }
+        }, 1500);
+      };
+
+      const handleSaveImage = () => {
+        playAudio('click'); 
+        fireTrackEvent('Download', { item: 'certificate' }, false); // [수정된 코드] Download 이벤트 발송
+        const element = document.getElementById('capture-area');
+        
+        if (window.html2canvas && element) {
+          setToastMsg("Capturing Image...");
+          
+          const originalHeight = element.style.height;
+          const originalMaxHeight = element.style.maxHeight;
+          const originalOverflow = element.style.overflow;
+          
+          element.style.height = `${element.scrollHeight}px`;
+          element.style.maxHeight = 'none';
+          element.style.overflow = 'visible';
+          
+          const parent = element.parentElement;
+          const originalScrollTop = parent ? parent.scrollTop : 0;
+          if (parent) parent.scrollTop = 0;
+          
+          window.html2canvas(element, { 
+            backgroundColor: '#000000', 
+            scale: 2, 
+            useCORS: true, 
+            allowTaint: true,
+            scrollY: -window.scrollY, 
+            windowHeight: element.scrollHeight, 
+            logging: false 
+          }).then(canvas => {
+            if (parent) parent.scrollTop = originalScrollTop; 
+            element.style.height = originalHeight;
+            element.style.maxHeight = originalMaxHeight;
+            element.style.overflow = originalOverflow;
+            
+            const link = document.createElement('a'); 
+            link.download = 'K-Survival-License.png'; 
+            link.href = canvas.toDataURL('image/png'); 
+            link.click(); 
+            setToastMsg("Save Complete!"); 
+            setTimeout(() => setToastMsg(""), 3000);
+          }).catch((err) => {
+            console.error(err); 
+            if (parent) parent.scrollTop = originalScrollTop;
+            element.style.height = originalHeight;
+            element.style.maxHeight = originalMaxHeight;
+            element.style.overflow = originalOverflow;
+            setToastMsg("Failed to save image."); 
+            setTimeout(() => setToastMsg(""), 3000);
+          });
+        } else {
+          setToastMsg("Module loading... Please try again.");
+          setTimeout(() => setToastMsg(""), 3000);
+        }
+      };
+
+      const renderToast = () => toastMsg && (
+        <div className="absolute top-20 left-1/2 -translate-x-1/2 bg-[#39ff14] text-black font-bold px-6 py-3 z-[10000] border-2 border-white animate-pulse whitespace-nowrap rounded-sm shadow-[0_0_15px_#39ff14]">
+          {toastMsg}
+        </div>
+      );
+
+      const renderShutter = () => isJailDropping && <div className="pp-shutter absolute"></div>;
+
+      const renderArresting = () => (
+        <div className="flex-1 flex flex-col items-center justify-center bg-black z-[1000] absolute inset-0 w-full h-full p-4 overflow-hidden animate-[fadeIn_0.5s_ease-out]">
+           <div className="absolute inset-0 bg-green-900/10 pointer-events-none z-20"></div>
+           <div className="relative w-full h-full max-w-2xl flex flex-col items-center justify-center">
+             <div className="absolute top-16 left-6 md:top-6 md:left-6 text-white text-xl md:text-2xl tracking-widest z-40 flex items-center gap-3 drop-shadow-md">
+               <div className="w-4 h-4 bg-red-600 rounded-full animate-pulse"></div> REC
+             </div>
+             <div className="absolute top-6 right-6 text-white text-xl md:text-2xl tracking-widest z-40 drop-shadow-md">CAM_04</div>
+             <div className="absolute bottom-6 left-6 text-white text-xl md:text-2xl tracking-widest z-40 drop-shadow-md whitespace-nowrap">{cctvTime}</div>
+             <div className="border-4 border-gray-800 relative w-full h-[60vh] overflow-hidden bg-[#111]" style={{ boxShadow: '0 0 50px rgba(0,0,0,0.8)' }}>
+               <img src={IMG_ARRESTED} crossOrigin="anonymous" alt="Arrested" className="w-full h-full object-cover grayscale-[30%] contrast-[1.1] sepia-[.3] hue-rotate-[40deg] scale-105 animate-[slowZoom_10s_linear_forwards]" />
+             </div>
+             <div className="absolute top-[55%] left-[30%] md:left-[35%] -translate-x-1/2 -translate-y-1/2 text-white font-bold text-3xl md:text-5xl tracking-widest z-40 px-6 py-3 bg-red-700/80 border-4 border-red-500 mix-blend-screen opacity-90 animate-bounce max-w-[80%] text-center whitespace-nowrap" style={{ boxShadow: '0 0 30px rgba(255,0,0,1)' }}>
+               REJECTED
+             </div>
+           </div>
+        </div>
+      );
+
+      const renderHero = () => (
+        <div className="flex-1 flex flex-col items-center justify-center p-4 md:p-8 text-center relative z-10 w-full h-full" style={{ backgroundImage: `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.9)), url(${IMG_MAIN_BG})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+          <div className="flex flex-col items-center relative w-full z-10 mt-16 md:mt-20 mb-2">
+            <div className="text-[#000] bg-[#facc15] font-bold text-[10px] md:text-xs tracking-wider px-3 py-1.5 shadow-[0_5px_15px_rgba(0,0,0,0.5)] border-x-4 border-black z-20 flex items-center gap-2 mb-4 md:mb-6 whitespace-nowrap">
+              <span className="opacity-60">|||</span>
+              [ TOP SECRET ]
+              <span className="opacity-60">|||</span>
+            </div>
+          
+            <div className="text-gray-400 font-bold text-xs md:text-sm tracking-widest mb-2 md:mb-3 opacity-90 border-y border-white/20 py-1 px-3 uppercase whitespace-nowrap">
+              REPUBLIC OF KOREA
+            </div>
+            
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-white tracking-tight leading-[1.05] uppercase mb-4 text-center px-2 w-full break-words" style={{ textShadow: '4px 4px 0 #b91c1c' }}>
+              THE HIDDEN<br />MANUAL
+            </h1>
+            
+            <h2 className="text-[#39ff14] text-sm sm:text-lg md:text-xl font-bold tracking-normal animate-pulse mt-1 bg-black/80 px-4 py-2 rounded-sm border-2 border-[#39ff14] w-[90%] max-w-[300px] text-center break-keep" style={{ boxShadow: '3px 3px 0 rgba(57,255,20,0.5)' }}>
+              K-AGENT ENTRANCE EXAM
+            </h2>
+          </div>
+          <p className="text-gray-200 mt-2 md:mt-6 max-w-[320px] leading-relaxed text-[15px] border-t-2 border-white/30 pt-4 font-bold bg-black/60 p-4 backdrop-blur-md rounded-sm border-x-2 border-b-2 break-keep z-10 shadow-lg">
+            Welcome to Korea.<br/>Before you enter, you must prove you have the basic 'Nunchi' (sense) to survive here.
+          </p>
+          <div className="mt-auto pt-4 md:pt-6 flex flex-col items-center w-full pb-10 z-10">
+            <div className="text-[11px] md:text-[13px] text-[#39ff14] mb-4 animate-bounce font-bold tracking-wider whitespace-nowrap" style={{ textShadow: '0 0 5px rgba(57,255,20,0.8)' }}>↓ TOUCH TO SCAN PASSPORT ↓</div>
+            <button 
+              onClick={() => { 
+                playAudio('scan'); 
+                fireTrackEvent('ClickButton', { step: 'hero_scan' }, true); // [수정된 코드] ClickButton 이벤트 발송
+                setTimeout(() => setGameState('intent'), 300); 
+              }} 
+              className="w-[160px] md:w-[200px] aspect-[1/1.4] bg-transparent flex flex-col items-center justify-center hover:-translate-y-2 transition-transform cursor-pointer relative overflow-hidden group active:scale-95 border-4 border-black p-0 shadow-[8px_8px_0_#000]"
+            >
+              <img src={IMG_PASSPORT} crossOrigin="anonymous" alt="Passport Cover" className="absolute inset-0 w-full h-full object-cover" />
+              <div className="passport-scanner-line"></div>
+              <div className="absolute inset-0 bg-[#39ff14]/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px] z-30">
+                 <span className="text-[#39ff14] font-bold text-4xl rotate-[-15deg] whitespace-nowrap" style={{ textShadow: '4px 4px 0 #000' }}>SCAN</span>
+              </div>
+            </button>
+          </div>
+        </div>
+      );
+
+      const renderIntent = () => (
+        <div className="flex-1 flex flex-col bg-[#2b2b2b] z-10 id-card-slide h-full">
+          <div className="flex-1 bg-[#1a1c1d] flex flex-col justify-center items-center px-4 relative shadow-inner border-b-4 border-[#39ff14]/30 gap-6">
+            <div className="absolute top-6 right-6 text-[#39ff14] font-bold text-sm md:text-lg tracking-widest drop-shadow-[0_0_5px_rgba(57,255,20,0.5)] whitespace-nowrap">[ IMMIGRATION CONTROL ]</div>
+            
+            <div className="w-full max-w-[420px] bg-[#0a0b0c] border border-gray-700 p-4 rounded-sm flex gap-4 items-center shadow-[0_0_20px_rgba(0,0,0,0.5)] mt-6">
+               <div className="w-[100px] h-[140px] flex-shrink-0 border-2 border-gray-600 bg-black overflow-hidden relative">
+                  <img src={getInspectorImage()} crossOrigin="anonymous" alt="Inspector" className="w-full h-full object-cover grayscale contrast-125" onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = getFallbackImage(); }} />
+               </div>
+               <div className="flex-1 flex flex-col justify-center self-stretch">
+                   <div className="bg-gray-600 text-white px-2 py-0.5 text-[10px] font-bold rounded-sm inline-block self-start mb-2 shrink-0">INSPECTOR</div>
+                   <div className="text-[#39ff14] text-[14px] leading-relaxed font-bold break-keep">
+                      {displayedText}<span className="animate-pulse bg-[#39ff14] w-2 h-4 inline-block align-middle ml-1"></span>
+                   </div>
+               </div>
+            </div>
+          </div>
+          
+          <div className="flex-none bg-black flex items-center justify-center p-6 md:p-8 border-t border-gray-800">
+            <button 
+              onClick={() => { 
+                playAudio('click'); 
+                fireTrackEvent('ClickButton', { step: 'intent_start' }, true); // [수정된 코드] ClickButton 이벤트 발송
+                setGameState('quiz'); 
+              }} 
+              className="bg-black text-[#39ff14] w-full max-w-sm py-5 md:py-6 px-6 border-4 border-[#39ff14] hover:bg-[#39ff14]/10 hover:-translate-y-1 transition-all text-xl flex flex-col items-center font-bold active:translate-y-1 active:shadow-none shadow-[4px_4px_0_rgba(57,255,20,0.5)] whitespace-nowrap"
+            >
+              <span className="text-xs md:text-sm text-gray-400 mb-2 md:mb-3 tracking-widest border-b border-gray-600 pb-1">&gt; _SYS_READY</span>
+              [ I UNDERSTAND ]<br/><span className="text-base md:text-lg mt-2 md:mt-3 font-black text-white">START (Proceed)</span>
+            </button>
+          </div>
+        </div>
+      );
+
+      const renderIrisGame = () => (
+        <div className="absolute inset-0 z-[60] flex flex-col items-center justify-center bg-black/95 backdrop-blur-sm p-4 overflow-hidden">
+           {irisGameState === 'intro' ? (
+              <div className="text-[#39ff14] animate-pulse text-center w-full px-2 flex flex-col items-center justify-center">
+                 <h1 className="text-2xl md:text-3xl font-black mb-4 md:mb-6 tracking-normal border-y-4 border-[#39ff14] py-3 md:py-4 bg-black/50 px-2 w-[90%] max-w-[320px] break-words">BIOMETRIC ID</h1>
+                 <p className="text-base md:text-xl text-gray-100 font-bold leading-relaxed break-keep">Initiating Iris Scan.<br/>Press [SCAN] when the red scanner aligns with the <span className="text-black bg-[#39ff14] px-1 font-black whitespace-nowrap">green safe zone</span>.</p>
+              </div>
+           ) : null}
+           {irisGameState === 'playing' ? (
+              <div className="w-full flex flex-col items-center justify-center h-full relative px-2">
+                 <div className="w-full max-w-md h-24 md:h-32 bg-[#111] border-4 border-gray-700 relative overflow-hidden mb-8 md:mb-12 shadow-[0_0_30px_rgba(57,255,20,0.2)]">
+                    <div className="absolute left-[40%] w-[20%] h-full bg-[#39ff14]/30 border-x-2 border-[#39ff14]"></div>
+                    <div className="absolute top-0 w-2 h-full bg-[#ff0000] shadow-[0_0_15px_#ff0000]" style={{ left: `${50 + 45 * Math.sin(irisTimeNow / 300)}%` }}></div>
+                 </div>
+                 <button onClick={handleIrisClick} className="bg-black text-[#39ff14] border-4 border-[#39ff14] px-10 py-5 md:px-16 md:py-8 text-2xl md:text-4xl font-black shadow-[4px_4px_0_rgba(57,255,20,1)] active:translate-y-[4px] active:shadow-none transition-all tracking-widest hover:bg-[#39ff14]/20">[ SCAN ]</button>
+              </div>
+           ) : null}
+           {irisGameState === 'result' ? (
+              <div className="text-center w-full px-2 flex flex-col items-center">
+                 <div className={`text-xl md:text-2xl font-black mb-4 tracking-normal p-3 md:p-4 border-y-4 bg-black/80 w-[90%] max-w-[300px] break-words ${irisResult === 'success' ? 'text-[#39ff14] border-[#39ff14]' : 'text-[#ef4444] border-[#ef4444]'}`}>
+                   {irisResult === 'success' ? 'IDENTITY VERIFIED' : 'SCAN FAILED'}
+                 </div>
+                 <p className="text-base md:text-lg font-bold text-white mt-2 break-keep">
+                   {irisResult === 'success' ? 'Verification Complete (Pass)' : 'Focus Lost (Trust Decreased)'}
+                 </p>
+              </div>
+           ) : null}
+        </div>
+      );
+
+      const renderSortGame = () => (
+        <div className="absolute inset-0 z-[60] flex flex-col items-center justify-center bg-black/95 backdrop-blur-sm p-4 overflow-hidden">
+           {sortGameState === 'intro' ? (
+              <div className="text-[#39ff14] text-center w-full px-2 animate-pulse flex flex-col items-center justify-center">
+                 <h1 className="text-2xl md:text-3xl font-black mb-4 md:mb-6 tracking-normal border-y-4 border-[#39ff14] py-3 md:py-4 bg-black/50 px-2 w-[90%] max-w-[320px] break-words">PASSPORT CONTROL</h1>
+                 <p className="text-base md:text-xl text-gray-100 font-bold leading-relaxed break-keep">
+                   Passports incoming!<br/>Sort 5 passports perfectly in <span className="text-black bg-[#ef4444] px-1 font-black whitespace-nowrap">8 seconds</span>.<br/>Local (Left), Foreign (Right)!
+                 </p>
+              </div>
+           ) : null}
+           {sortGameState === 'playing' ? (
+              <div className="w-full max-w-md bg-[#111] border-4 border-[#39ff14] p-4 md:p-6 shadow-[0_0_30px_rgba(57,255,20,0.2)] flex flex-col items-center">
+                 <h2 className="text-[#39ff14] text-lg md:text-2xl font-bold mb-4 tracking-tight">SORT THE PASSPORTS</h2>
+                 <div className="text-red-500 text-2xl md:text-4xl font-bold mb-6 animate-pulse border-b-2 border-red-500 pb-2">TIME: 00:0{sortTimeLeft}</div>
+                 <div className="flex justify-center items-center h-28 md:h-40 mb-6 w-full relative">
+                    <div className="passport-pop absolute" key={sortCurrentIdx}>
+                      {sortSequence[sortCurrentIdx] === 'local' ? <PassportLocal /> : <PassportForeign />}
+                    </div>
+                 </div>
+                 <div className="flex justify-center gap-2 md:gap-3 mb-8">
+                    {sortSequence.map((_, i) => (
+                       <div key={i} className={`w-3 h-3 md:w-5 md:h-5 border-2 ${i < sortCurrentIdx ? 'bg-[#39ff14] border-[#39ff14] shadow-[0_0_10px_#39ff14]' : 'bg-transparent border-gray-600'}`}></div>
+                    ))}
+                 </div>
+                 <div className="flex gap-3 md:gap-4 w-full">
+                    <button onClick={() => handleSortClick('local')} className="flex-1 bg-black border-4 border-[#39ff14] text-[#39ff14] py-3 md:py-6 text-base md:text-xl font-bold tracking-tight hover:bg-[#39ff14]/20 active:translate-y-1 active:shadow-none transition-transform flex flex-col items-center shadow-[4px_4px_0_rgba(57,255,20,0.8)] px-1">
+                      <span className="text-xl md:text-2xl mb-1">👈</span>[ LOCAL ]
+                    </button>
+                    <button onClick={() => handleSortClick('foreign')} className="flex-1 bg-black border-4 border-[#3b82f6] text-[#3b82f6] py-3 md:py-6 text-base md:text-xl font-bold tracking-tight hover:bg-[#3b82f6]/20 active:translate-y-1 active:shadow-none transition-transform flex flex-col items-center shadow-[4px_4px_0_rgba(59,130,246,0.8)] px-1">
+                      <span className="text-xl md:text-2xl mb-1">👉</span>[ FOREIGN ]
+                    </button>
+                 </div>
+              </div>
+           ) : null}
+           {sortGameState === 'result' ? (
+              <div className="text-center w-full px-2 flex flex-col items-center">
+                 <div className={`text-xl md:text-2xl font-black mb-4 tracking-normal p-3 md:p-4 border-y-4 bg-black/80 w-[90%] max-w-[320px] break-words ${sortResult === 'success' ? 'text-[#39ff14] border-[#39ff14]' : 'text-[#ef4444] border-[#ef4444]'}`}>
+                   {sortResult === 'success' ? 'ALL SORTED PERFECTLY' : 'WRONG PASSPORT!'}
+                 </div>
+                 <p className="text-base md:text-lg font-bold text-white mt-2 break-keep">
+                   {sortResult === 'success' ? 'Sorting Complete (Pass)' : 'Wrong Category (Trust Decreased)'}
+                 </p>
+              </div>
+           ) : null}
+        </div>
+      );
+
+      const renderFakeIdGame = () => (
+        <div className="absolute inset-0 z-[60] flex flex-col items-center justify-center bg-black/95 backdrop-blur-sm p-4 overflow-hidden">
+           {fakeIdGameState === 'intro' ? (
+              <div className="text-[#39ff14] text-center w-full px-2 flex flex-col items-center justify-center">
+                 <h1 className="text-2xl md:text-3xl font-black mb-4 md:mb-6 tracking-normal border-y-4 border-[#39ff14] py-3 md:py-4 bg-black/50 px-2 w-[90%] max-w-[320px] break-words">FAKE ID DETECT</h1>
+                 <p className="text-base md:text-xl text-gray-100 font-bold leading-relaxed break-keep">
+                   Document Check Time.<br/>Find and tap the <span className="text-[#ff0000] animate-pulse font-black px-1 border border-red-500 whitespace-nowrap">only fake ( f )</span> among the real ones ( r )!
+                 </p>
+              </div>
+           ) : null}
+           {fakeIdGameState === 'playing' ? (
+               <div className="w-full flex flex-col items-center justify-center relative flex-1 pt-8 pb-8 px-2">
+                 <div className="text-center text-3xl md:text-4xl text-[#ef4444] font-bold mb-4 md:mb-6 animate-pulse border-b-4 border-[#ef4444] pb-2">
+                   TIME: 00:0{fakeIdTimeLeft}
+                 </div>
+                 <div className="grid grid-cols-6 gap-1 w-full max-w-[300px] aspect-[3/4] bg-[#111] p-3 border-4 border-[#39ff14]" style={{ boxShadow: '0 0 30px rgba(57,255,20,0.2)' }}>
+                   {[...Array(FAKE_ID_COUNT)].map((_, i) => (
+                     <button key={i} onClick={() => handleFakeIdClick(i === fakeIdPos)} className="w-full h-full flex items-center justify-center font-bold text-xl md:text-2xl hover:bg-[#39ff14] hover:text-black transition-colors cursor-pointer bg-[#0a1a0a] text-[#39ff14] border border-[#39ff14]/30">
+                       {i === fakeIdPos ? 'f' : 'r'}
+                     </button>
+                   ))}
+                 </div>
+              </div>
+           ) : null}
+           {fakeIdGameState === 'result' ? (
+              <div className="text-center w-full px-2 flex flex-col items-center">
+                 <div className={`text-xl md:text-2xl font-black mb-4 tracking-normal p-3 md:p-4 border-y-4 bg-black/80 w-[90%] max-w-[320px] break-words ${fakeIdResult === 'success' ? 'text-[#39ff14] border-[#39ff14]' : 'text-[#ef4444] border-[#ef4444]'}`}>
+                   {fakeIdResult === 'success' ? 'FORGERY DETECTED' : 'INSPECTION FAILED'}
+                 </div>
+                 <p className="text-base md:text-lg font-bold text-white mt-2 break-keep">
+                   {fakeIdResult === 'success' ? 'Fake Detected (Pass)' : 'Detection Failed (Trust Decreased)'}
+                 </p>
+              </div>
+           ) : null}
+        </div>
+      );
+
+      const renderQuiz = () => (
+        <div className="flex flex-col w-full h-full relative bg-[#2b2b2b]">
+          <div className="w-full h-1.5 md:h-2 bg-[#000] z-10 flex-none border-b border-gray-700">
+            <div className={`h-full transition-all duration-1000 ease-linear ${isTimeWarning ? 'bg-red-500 animate-pulse' : 'bg-[#39ff14]'}`} style={{ width: `${(timeLeft / TIME_LIMIT) * 100}%`, boxShadow: '0 0 10px #39ff14' }}></div>
+          </div>
+
+          <div className="flex-none bg-[#1a1c1d] px-4 py-8 border-b-4 border-gray-800 relative z-10 flex flex-col justify-center items-center">
+            <div className="w-full max-w-[420px] bg-[#0a0a0a] border-4 border-[#39ff14]/30 p-4 rounded-sm flex gap-4 items-center shadow-[0_0_20px_rgba(0,0,0,0.5)] mt-4">
+              <div className="w-[80px] h-[110px] flex-shrink-0 bg-black border-2 border-gray-600 relative overflow-hidden flex items-center justify-center shadow-[4px_4px_0_#000]">
+                <img src={getInspectorImage()} crossOrigin="anonymous" alt="Inspector" className="w-full h-full object-cover grayscale-[10%]" onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = getFallbackImage(); }} />
+              </div>
+              <div className="flex-1 h-auto bg-[#0a0a0a] border-4 border-[#39ff14]/30 p-3 md:p-4 relative flex flex-col justify-center shadow-inner overflow-visible">
+                <p className="text-[#39ff14] text-[13px] sm:text-[14px] md:text-[16px] leading-relaxed font-bold break-keep pr-1">
+                  {displayedText}
+                  {timeLeft === 0 && !stamp ? <span className="text-red-500"> [TIME OUT]</span> : null}
+                  <span className="animate-pulse bg-[#39ff14] w-2 h-4 inline-block align-middle ml-1"></span>
+                </p>
+              </div>
+            </div>
+            
+            <div className="absolute top-3 right-4 md:top-4 md:right-5 flex items-center gap-2">
+              {isTextFinished && !stamp ? (
+                 <div className={`font-bold tracking-widest text-[11px] md:text-sm px-2 py-0.5 border-2 ${isTimeWarning ? 'border-red-600 text-white bg-red-600 animate-pulse shadow-[0_0_8px_#dc2626]' : 'border-gray-900 text-gray-900 bg-[#39ff14]'}`}>
+                   00:{timeLeft.toString().padStart(2, '0')}
+                 </div>
+              ) : null}
+              <div className="text-[#ff4747] font-bold tracking-widest bg-[#111] px-2 py-0.5 border-2 border-[#ff4747] text-[11px] md:text-sm shadow-[2px_2px_0_#000] whitespace-nowrap">
+                WARN: {wrongCount}/5
+              </div>
+            </div>
+          </div>
+
+          <div className="flex-1 bg-[#2b2b2b] p-4 md:p-6 flex flex-col justify-start pt-8 z-10 overflow-hidden relative">
+            <div className="absolute top-4 left-0 right-0 flex justify-center shrink-0">
+              <div className="inline-block bg-[#111] text-white px-4 py-1 border-2 border-gray-600 font-bold text-xs tracking-widest shadow-[2px_2px_0_#000] whitespace-nowrap">
+                DOCUMENT {currentIdx + 1} / {QUIZ_DATA.length}
+              </div>
+            </div>
+
+            {stamp ? (
+              <div className="absolute top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 stamp-animation z-30 pointer-events-none">
+                {stamp === 'pass' ? (
+                  <div className="border-[2px] border-[#39ff14] text-[#39ff14] px-4 py-1 text-2xl font-black tracking-widest bg-black/90 whitespace-nowrap shadow-[0_0_15px_rgba(57,255,20,0.6)]">
+                    PASSED
+                  </div>
+                ) : (
+                  <div className="border-[2px] border-[#ef4444] text-[#ef4444] px-4 py-1 text-2xl font-black tracking-widest bg-black/90 whitespace-nowrap shadow-[0_0_15px_rgba(239,68,68,0.6)]">
+                    WARNING
+                  </div>
+                )}
+              </div>
+            ) : null}
+
+            <div className="w-full flex flex-col gap-3 md:gap-4 z-20 mt-8 max-w-md mx-auto overflow-y-auto pb-6 scrollbar-hide">
+              {currentQuestion.options.map((opt, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => handleOptionClick(idx)}
+                  disabled={showTip || !isTextFinished}
+                  className="bg-[#1a1c1d] text-gray-200 text-left p-4 border-2 border-gray-700 hover:border-[#39ff14] hover:shadow-[4px_4px_0_rgba(57,255,20,0.5)] disabled:opacity-80 transition-all text-[14px] md:text-[16px] font-bold flex items-center h-auto gap-4 leading-relaxed cursor-pointer break-keep active:translate-y-1 active:shadow-none"
+                >
+                  <span className="bg-gray-800 text-[#39ff14] w-7 h-7 md:w-8 md:h-8 flex items-center justify-center border-2 border-gray-600 font-bold shrink-0 text-sm md:text-base">
+                    {String.fromCharCode(65 + idx)}
+                  </span>
+                  <span className="flex-1">{opt}</span>
+                </button>
+              ))}
+            </div>
+            
+            {showTip ? (
+              <div className="absolute inset-0 bg-black/90 z-40 flex flex-col items-center justify-center p-5 cursor-pointer backdrop-blur-sm" onClick={handleNext}>
+                <div className={`bg-[#111] border-4 p-5 md:p-8 w-full max-w-sm shadow-[8px_8px_0_#000] text-center ${stamp === 'pass' ? 'border-[#39ff14]' : 'border-red-500'}`}>
+                  <h3 className={`text-xl md:text-2xl mb-4 font-bold border-b-2 pb-3 tracking-wider whitespace-nowrap ${stamp === 'pass' ? 'text-[#39ff14] border-[#39ff14]/50' : 'text-red-500 border-red-500/50'}`}>
+                    {stamp === 'pass' ? '> CORRECT_ANSWER' : '> WRONG_ANSWER'}
+                  </h3>
+                  
+                  {stamp === 'warning' && (
+                    <div className="text-yellow-400 font-bold mb-4 text-sm md:text-base bg-yellow-400/10 py-3 px-2 border border-yellow-400/30 break-keep">
+                      <span className="underline">Answer: [{String.fromCharCode(65 + currentQuestion.answer)}]</span><br/>{currentQuestion.options[currentQuestion.answer]}
+                    </div>
+                  )}
+                  
+                  <p className="text-gray-100 text-[15px] md:text-[17px] leading-relaxed font-bold mb-2 break-keep">{currentQuestion.tip}</p>
+                </div>
+                <div className="mt-8 px-8 py-3 bg-[#39ff14] text-black font-bold text-lg border-4 border-black flex flex-col items-center justify-center animate-pulse shadow-[4px_4px_0_rgba(57,255,20,0.5)] whitespace-nowrap">
+                   <span>&gt; SYSTEM_VERIFIED</span>
+                   <span className="mt-1 text-[10px] text-black/80 font-bold">Tap to continue_</span>
+                </div>
+              </div>
+            ) : null}
+          </div>
+        </div>
+      );
+
+      const renderResult = () => (
+        <div className="flex-1 flex flex-col items-center bg-[#000] overflow-y-auto z-10 w-full p-4 relative scrollbar-hide h-full">
+          <div id="capture-area" className="flex flex-col items-center pt-8 pb-6 px-2 w-full max-w-[440px] bg-black">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl text-[#39ff14] mb-4 font-bold tracking-widest text-center shadow-sm whitespace-nowrap flex items-center justify-center w-full">
+              [ K-AGENT CLEARANCE ]
+            </h2>
+            
+            <div className="text-[#39ff14] mb-6 text-center text-[12px] sm:text-sm md:text-base font-bold bg-[#111] px-4 py-2 border-2 border-[#39ff14]/40 w-full shadow-inner break-keep">
+              VERIFICATION COMPLETE. PASSED <span className="text-white text-xl md:text-2xl mx-1">{score}</span> OUT OF 5
+            </div>
+
+            <div className="w-full flex justify-center mb-6 relative px-2">
+               <img src={currentResultData.img} crossOrigin="anonymous" alt="K-ID Card" className="w-full max-w-[400px] h-auto object-contain card-glow-effect rounded-xl" style={{ '--glow-color': currentResultData.color }} />
+            </div>
+
+            <div className="bg-[#0a0a0a] w-full max-w-[400px] p-5 relative border-4 border-gray-800 shadow-[8px_8px_0_#000]">
+              <div className="flex justify-between items-center mb-3 border-b-2 border-gray-800 pb-2">
+                <div className="text-[12px] md:text-sm text-gray-500 font-bold uppercase tracking-wider whitespace-nowrap">K-Agent License Info</div>
+              </div>
+              
+              <div className="mb-4 pb-1">
+                <div className="font-bold text-[20px] sm:text-2xl md:text-3xl break-keep" style={{ color: currentResultData.color, textShadow: `2px 2px 0 #000`, lineHeight: '1.2' }}>
+                  {currentResultData.class}
+                </div>
+              </div>
+
+              <div className="p-4 border-l-4 shadow-inner bg-[#111]" style={{ borderColor: currentResultData.color }}>
+                <div className="mb-3 flex items-center gap-3">
+                  <span className="inline-block text-[10px] md:text-xs px-2 py-0.5 font-bold uppercase tracking-wider border border-black whitespace-nowrap" style={{ backgroundColor: currentResultData.color, color: '#000' }}>Top Secret</span>
+                  <h4 className="font-bold text-xs md:text-sm text-white whitespace-nowrap">THE HIDDEN MANUAL</h4>
+                </div>
+                <div className="font-bold text-base sm:text-lg md:text-xl mb-2 text-white/90 underline decoration-[#39ff14]/50 break-keep pb-1">
+                  {currentResultData.code}
+                </div>
+                <div className="text-[14px] md:text-[16px] text-gray-300 font-medium whitespace-pre-line m-0 p-0 break-keep pb-1" style={{ lineHeight: '1.6' }}>
+                  {currentResultData.secret}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="w-full max-w-[400px] flex flex-col gap-3 mt-4 mb-8 px-2">
+            <button onClick={handleShareLink} className="bg-[#39ff14] text-black px-4 py-4 font-bold flex items-center justify-center gap-2 hover:bg-green-400 transition-colors text-xl border-4 border-black shadow-[4px_4px_0_#000] active:translate-y-1 active:shadow-none whitespace-nowrap">🔗 SHARE LINK</button>
+            <button onClick={handleSaveImage} className="bg-transparent w-full py-4 font-bold text-[#39ff14] border-4 border-[#39ff14] hover:bg-[#39ff14]/20 transition-all text-xl shadow-[4px_4px_0_#39ff14] active:translate-y-1 active:shadow-none whitespace-nowrap">💾 SAVE CERTIFICATE</button>
+            
+            <div className="flex justify-center items-center gap-4 md:gap-5 mt-5 mb-3">
+               <button onClick={() => handleSNSShare('ig')} className="w-14 h-14 md:w-16 md:h-16 bg-gradient-to-tr from-[#f09433] via-[#e6683c] to-[#bc1888] border-2 border-white flex items-center justify-center hover:scale-110 shadow-[4px_4px_0_#000] active:translate-y-1 active:shadow-none" title="Instagram"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="square" strokeLinejoin="miter"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></button>
+               <button onClick={() => handleSNSShare('fb')} className="w-14 h-14 md:w-16 md:h-16 bg-[#1877F2] border-2 border-white flex items-center justify-center hover:scale-110 shadow-[4px_4px_0_#000] active:translate-y-1 active:shadow-none" title="Facebook"><svg width="30" height="30" viewBox="0 0 24 24" fill="white"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></button>
+               <button onClick={() => handleSNSShare('x')} className="w-14 h-14 md:w-16 md:h-16 bg-black border-2 border-white flex items-center justify-center hover:scale-110 shadow-[4px_4px_0_#fff] active:translate-y-1 active:shadow-none" title="X (Twitter)"><svg width="26" height="26" viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.005 4.126H5.078z"/></svg></button>
+               <button onClick={() => handleSNSShare('tt')} className="w-14 h-14 md:w-16 md:h-16 bg-black border-2 border-[#25F4EE] flex items-center justify-center hover:scale-110 shadow-[4px_4px_0_#FE2C55] active:translate-y-1 active:shadow-none" title="TikTok"><svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.01.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.12-3.44-3.17-3.61-5.46-.02-.84.05-1.68.27-2.5.46-1.85 1.76-3.41 3.42-4.32 1.25-.66 2.7-.93 4.11-.79.03 1.4.03 2.8.03 4.2-.69-.11-1.4-.04-2.06.2-1.13.38-2.07 1.33-2.31 2.49-.12.56-.12 1.14-.02 1.7.35 1.57 1.83 2.7 3.45 2.66 1.4-.03 2.64-1.02 2.93-2.38.12-.5.15-1.03.14-1.55-.02-4.66-.02-9.32-.01-13.98z"/></svg></button>
+            </div>
+            <button 
+              onClick={() => { 
+                playAudio('click'); 
+                fireTrackEvent('Retry', { result: 'clear' }, true); // [수정된 코드] Retry 이벤트 발송
+                setTimeout(() => window.location.reload(), 300); 
+              }} 
+              className="mt-4 bg-[#7f1d1d] border-4 border-black text-white w-full py-4 text-xl font-bold transition-all hover:bg-[#991b1b] shadow-[4px_4px_0_#ff0000] active:translate-y-1 active:shadow-none whitespace-nowrap"
+            >
+              RETAKE EXAM
+            </button>
+          </div>
+        </div>
+      );
+
+      const renderResultJail = () => (
+        <div className="flex-1 flex flex-col items-center justify-center p-6 bg-[#050505] relative overflow-hidden z-10 w-full pb-12 h-full">
+          <div className="absolute bottom-10 w-[90%] max-w-sm bg-[#0a0a0a] border-4 border-[#ff0000] z-[110] flex flex-col items-center p-5 md:p-6 citation-slide-up shadow-[8px_8px_0_#000]">
+              <h3 className="text-[#ff0000] text-lg md:text-2xl border-b-4 border-[#ff0000]/50 w-full text-center pb-2 mb-4 font-bold tracking-tight px-1">EVALUATION REPORT</h3>
+              <div className="text-[#ff0000] font-black text-xl md:text-2xl mb-6 border-[3px] border-[#ff0000] border-double p-2 rotate-[-5deg] tracking-tight bg-black w-[90%] text-center px-1">TRAINING REQUIRED</div>
+              <p className="text-sm md:text-base font-bold text-gray-300 text-left w-full mb-2">"You are not ready to enter Korea."</p>
+              <p className="text-xs md:text-sm text-gray-400 text-left w-full mb-6 leading-relaxed font-bold break-keep">Survival is impossible without knowing the unspoken rules. Complete the training (quiz) again and stand before the desk.</p>
+              <div className="w-full h-px border-t-2 border-dashed border-[#ff0000]/50 my-2"></div>
+              <p className="text-[10px] md:text-xs text-[#ff0000]/80 mt-4 tracking-wider font-bold">KOREA IMMIGRATION SERVICE</p>
+          </div>
+          <div className="z-10 text-center w-full max-w-sm absolute top-10 flex flex-col items-center px-4">
+            <div className="text-[#ff0000] text-3xl md:text-4xl mb-6 font-black tracking-tight animate-pulse border-y-4 border-double border-[#ff0000] py-3 bg-black w-[90%] shadow-[0_0_30px_#ff0000] px-1 text-center">ACCESS DENIED</div>
+            <button 
+              onClick={() => { 
+                playAudio('click'); 
+                fireTrackEvent('Retry', { result: 'fail' }, true); // [수정된 코드] Retry 이벤트 발송
+                setTimeout(() => window.location.reload(), 300); 
+              }} 
+              className="mt-4 bg-[#7f1d1d] border-4 border-black text-white w-[90%] py-4 text-base sm:text-lg font-black hover:bg-[#991b1b] transition-colors z-[120] relative shadow-[4px_4px_0_#ff0000] active:translate-y-1 active:shadow-none break-keep px-2"
+            >
+              [ RETAKE EXAM ]
+            </button>
+          </div>
+        </div>
+      );
+
+      return (
+        <div className="app-wrapper retro-global">
+          <style dangerouslySetInnerHTML={{ __html: STYLES }} />
+          <div className="app-container">
+            <div className="crt-overlay"></div>
+            <button 
+              onClick={() => { playAudio('click'); setIsMuted(!isMuted); }}
+              className="absolute top-4 left-4 z-[200] flex items-center justify-center w-12 h-12 bg-black border-2 border-[#39ff14] text-[#39ff14] hover:bg-[#39ff14]/20 transition-colors active:scale-95 shadow-[4px_4px_0_rgba(57,255,20,1)] cursor-pointer"
+            >
+              <PixelSpeakerIcon isMuted={isMuted} />
+            </button>
+            {renderToast()}
+            {renderShutter()}
+            
+            {gameState === 'hero' && renderHero()}
+            {gameState === 'intent' && renderIntent()}
+            {gameState === 'quiz' && renderQuiz()}
+            {gameState === 'irisgame' && renderIrisGame()}
+            {gameState === 'sortgame' && renderSortGame()}
+            {gameState === 'fakeidgame' && renderFakeIdGame()}
+            {gameState === 'arresting' && renderArresting()}
+            {gameState === 'result' && renderResult()}
+            {gameState === 'result_jail' && renderResultJail()}
+          </div>
+        </div>
+      );
+    }
+    
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
