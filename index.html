@@ -68,13 +68,9 @@
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
-    /* GTM 클릭 유실 방지 매직 코드: 버튼 전체를 하나의 클릭 덩어리로 만듦 */
-    button *, .quiz-card * { pointer-events: none !important; }
-    .lang-toggle span { pointer-events: auto; }
-    
     body, html {
       width: 100%; height: 100%;
-      background-color: #caced1;
+      background-color: #e9ecef; /* PC 배포 시 네모칸이 잘 보이도록 배경색 고정 */
       color: var(--text-color);
       font-family: 'VT323', monospace;
       overflow: hidden; 
@@ -82,24 +78,25 @@
       touch-action: manipulation;
     }
 
+    /* 레이아웃 박스 구조 강화 */
     .app-wrapper {
       position: relative;
       width: 100%; height: 100%; height: 100dvh; 
       max-width: 420px; 
       margin: 0 auto;
       background-color: var(--bg-color);
-      border-left: 2px solid #aaa;
-      border-right: 2px solid #aaa;
+      border-left: 1px solid #ccc;
+      border-right: 1px solid #ccc;
       display: flex; flex-direction: column;
       overflow: hidden; 
-      box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.15);
     }
 
     @media (min-width: 450px) {
       .app-wrapper {
         height: 90vh;
         max-height: 800px;
-        border: 2px solid #999;
+        border: 2px solid #ccc;
         border-radius: 16px;
         box-shadow: 0 20px 50px rgba(0,0,0,0.25);
       }
@@ -155,7 +152,7 @@
       cursor: pointer; display: flex; align-items: center; justify-content: center;
       transition: all 0.2s; overflow: hidden;
     }
-    .thumb-btn svg { width: 45px; height: 45px; stroke: #666; transition: stroke 0.3s; }
+    .thumb-btn svg { width: 45px; height: 45px; stroke: #666; transition: stroke 0.3s; pointer-events: none; }
     
     .thumb-btn.scanning { border-color: var(--primary-red); background: #fff; box-shadow: 0 0 20px rgba(230,0,60,0.3); }
     .thumb-btn.scanning svg { stroke: var(--primary-red); }
@@ -163,7 +160,7 @@
     .local-laser {
       position: absolute; left: 0; width: 100%; height: 3px;
       background: var(--primary-red); box-shadow: 0 0 8px var(--primary-red);
-      opacity: 0; top: 0; z-index: 5;
+      opacity: 0; top: 0; z-index: 5; pointer-events: none;
     }
     .thumb-btn.scanning .local-laser { animation: localSweep 0.3s ease-in-out infinite; opacity: 1; }
     @keyframes localSweep { 0% { top: 10%; } 50% { top: 90%; } 100% { top: 10%; } }
@@ -188,14 +185,14 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.05);
       flex-shrink: 1; 
     }
-    .img-wrapper { position: absolute; top:0; left:0; width:100%; height:100%; display: flex; justify-content: center; align-items: center;}
-    .img-wrapper img { width:100%; height:100%; object-fit: cover; opacity: 0; transition: opacity 0.3s ease, filter 0.3s ease, transform 0.3s ease; }
+    .img-wrapper { position: absolute; top:0; left:0; width:100%; height:100%; display: flex; justify-content: center; align-items: center; pointer-events: none;}
+    .img-wrapper img { width:100%; height:100%; object-fit: cover; opacity: 0; transition: opacity 0.3s ease, filter 0.3s ease, transform 0.3s ease; pointer-events: none;}
     
     .card-label { 
       position: relative; font-size: 2.2rem; font-weight: bold; color: #fff; 
       z-index: 10; padding: 4px 20px; margin-bottom: 12px; letter-spacing: 1px;
       background: rgba(17,17,17,0.85); border: 2px solid #fff; border-radius: 6px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3); pointer-events: none;
     }
 
     .quiz-card.selected { transform: scale(1.05); box-shadow: 0 10px 25px rgba(0,0,0,0.2); z-index: 20; }
@@ -238,7 +235,7 @@
       transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     }
     .sns-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,0.15); }
-    .sns-btn svg { width: 28px; height: 28px; fill: #fff; }
+    .sns-btn svg { width: 28px; height: 28px; fill: #fff; pointer-events: none;}
     
     .btn-x { background-color: #000000; }
     .btn-fb { background-color: #1877F2; }
@@ -267,10 +264,9 @@
 
     <div class="top-nav">
       <div class="lang-toggle" id="langBox">
-        <!-- 다국어 버튼: GTM 클릭 감지를 위해 lang-btn 클래스 추가 -->
-        <span class="lang-btn active" onclick="changeLang('EN')">EN</span> | 
-        <span class="lang-btn" onclick="changeLang('ZU')">ZU</span> | 
-        <span class="lang-btn" onclick="changeLang('AF')">AF</span>
+        <span class="active" onclick="changeLang('EN')">EN</span> | 
+        <span onclick="changeLang('ZU')">ZU</span> | 
+        <span onclick="changeLang('AF')">AF</span>
       </div>
       
       <button class="sound-toggle muted" id="muteBtn" onclick="toggleMute()">
@@ -295,11 +291,10 @@
         </div>
         
         <h2 id="hero-subtitle" class="keep-all">Scan your veins for<br>K-Culture levels</h2>
-        <!-- 시작 영역: 여백 텍스트를 눌러도 시작버튼으로 작동하도록 onclick 추가 -->
         <div class="scanner-container">
           <button class="thumb-btn" id="thumbBtn" onclick="runIntroScan()">
-            <div class="local-laser" style="pointer-events: none;"></div>
-            <svg style="pointer-events: none;" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+            <div class="local-laser"></div>
+            <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
               <path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4" />
               <path d="M14 13.12c0 2.38 0 6.38-1 8.88" />
               <path d="M17.29 21.02c.12-.6.43-2.3.5-3.02" />
@@ -329,13 +324,13 @@
       <div class="quiz-container">
         <!-- SA Card -->
         <div class="quiz-card" id="card-sa" onclick="pick(0)">
-          <div class="img-wrapper" style="pointer-events: none;"><img id="img-sa" src="" alt="SA Option" onerror="window.handleImgError(this)" style="pointer-events: none;"></div>
-          <span class="card-label keep-all" id="label-sa" style="pointer-events: none;">NOW NOW</span>
+          <div class="img-wrapper"><img id="img-sa" src="" alt="SA Option" onerror="window.handleImgError(this)"></div>
+          <span class="card-label keep-all" id="label-sa">NOW NOW</span>
         </div>
         <!-- KR Card -->
         <div class="quiz-card" id="card-kr" onclick="pick(1)">
-          <div class="img-wrapper" style="pointer-events: none;"><img id="img-kr" src="" alt="KR Option" onerror="window.handleImgError(this)" style="pointer-events: none;"></div>
-          <span class="card-label keep-all" id="label-kr" style="pointer-events: none;">FAST FAST</span>
+          <div class="img-wrapper"><img id="img-kr" src="" alt="KR Option" onerror="window.handleImgError(this)"></div>
+          <span class="card-label keep-all" id="label-kr">FAST FAST</span>
         </div>
       </div>
     </div>
@@ -373,28 +368,28 @@
         </svg>
       </div>
       
-      <div id="capture-area" class="result-text-box keep-all">
+      <div class="result-text-box keep-all">
         <h1 id="res-perc" class="perc-val">80% K-BLOOD</h1>
         <h2 id="res-title" class="diag-title">KOREAN SURVIVOR</h2>
         <p id="res-desc" class="diag-desc">You have fully adapted to the rhythm of Korea. From Seoul to Busan, you can survive the dynamic and fast-paced K-culture with ease.</p>
       </div>
 
-      <button class="action-btn keep-all" id="retryBtn" onclick="handleRetry()"><span style="pointer-events: none;">RETRY TEST</span></button>
-      <button class="action-btn btn-dark keep-all" id="copyLinkBtn" onclick="shareSNS('link')"><span style="pointer-events: none;">COPY LINK</span></button>
+      <button class="action-btn keep-all" id="retryBtn" onclick="handleRetry()">RETRY TEST</button>
+      <button class="action-btn btn-dark keep-all" id="copyLinkBtn" onclick="shareSNS('link')">COPY LINK</button>
       
       <p class="sns-title keep-all" id="shareText">SHARE YOUR RESULTS</p>
       <div class="sns-container">
         <button class="sns-btn btn-x" onclick="shareSNS('x')" aria-label="Share on X">
-          <svg style="pointer-events: none;" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
         </button>
         <button class="sns-btn btn-fb" onclick="shareSNS('fb')" aria-label="Share on Facebook">
-          <svg style="pointer-events: none;" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
         </button>
         <button class="sns-btn btn-ig" onclick="shareSNS('ig')" aria-label="Share on Instagram">
-          <svg style="pointer-events: none;" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
         </button>
         <button class="sns-btn btn-tt" onclick="shareSNS('tt')" aria-label="Share on TikTok">
-          <svg style="pointer-events: none;" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1.04-.1z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1.04-.1z"/></svg>
         </button>
       </div>
 
@@ -478,10 +473,12 @@
       if(!muted) playSfx('tap');
     }
 
+    // [완벽 추적] 재시도 버튼
     function handleRetry() {
       window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({'event': '재시도'});
       window.dataLayer.push({'event': 'TP-Retry'});
-      setTimeout(() => location.reload(), 400); 
+      setTimeout(() => location.reload(), 400); // 전송 보장을 위한 지연시간
     }
 
     const driveIds = {
@@ -566,9 +563,13 @@
         document.getElementById('load-txt').innerText = i18nGlobal[l].load;
         document.getElementById('tap-text').innerText = i18nGlobal[l].tap;
         document.getElementById('backBtn').innerText = i18nGlobal[l].back;
-        document.getElementById('retryBtn').innerHTML = `<span style="pointer-events: none;">${i18nGlobal[l].retry}</span>`;
-        document.getElementById('copyLinkBtn').innerHTML = `<span style="pointer-events: none;">${i18nGlobal[l].copy}</span>`;
+        document.getElementById('retryBtn').innerText = i18nGlobal[l].retry;
+        document.getElementById('copyLinkBtn').innerText = i18nGlobal[l].copy;
         document.getElementById('shareText').innerText = i18nGlobal[l].share;
+
+        // [완벽 추적] 언어 변경
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({'event': '언어_변경', '선택_언어': l});
 
         if (step < 5 && document.getElementById('quiz').classList.contains('active')) {
             renderQuiz();
@@ -583,7 +584,9 @@
       isTransitioning = true;
       playSfx('intro');
       
+      // [완벽 추적] 시작 버튼 (클릭 트리거 무시하고 JS에서 직접 발사)
       window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({'event': '퀴즈_시작'}); 
       window.dataLayer.push({'event': 'TP-ClickButton'});
 
       const btn = document.getElementById('thumbBtn');
@@ -643,6 +646,10 @@
       playSfx('tap');
       answers[step] = v;
 
+      // [완벽 추적] 질문 답변 클릭
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({'event': '질문_답변', '진행_단계': step + 1});
+
       const cardSA = document.getElementById('card-sa');
       const cardKR = document.getElementById('card-kr');
       
@@ -670,8 +677,10 @@
     }
 
     function runLoading() {
+      // [완벽 추적] 전환 완료 (광고 효율을 위해 1회 발송 제한)
       if (!sessionStorage.getItem('conversion_fired')) {
         window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({'event': '전환_완료'});
         window.dataLayer.push({'event': 'SubmitForm'});
         sessionStorage.setItem('conversion_fired', 'true');
       }
@@ -682,18 +691,33 @@
 
     function updateResultText() {
       const l = i18nGlobal[currentLang];
+      let tierName = "";
+
       if(currentScore >= 4) {
+        tierName = "KOREAN SURVIVOR";
         document.getElementById('res-title').innerText = l.res1_t;
         document.getElementById('res-title').style.color = "var(--primary-red)";
         document.getElementById('res-desc').innerHTML = l.res1_d;
       } else if (currentScore >= 2) {
+        tierName = "HYBRID SOUL";
         document.getElementById('res-title').innerText = l.res2_t;
         document.getElementById('res-title').style.color = "#111"; 
         document.getElementById('res-desc').innerHTML = l.res2_d;
       } else {
+        tierName = "PURE CHILLER";
         document.getElementById('res-title').innerText = l.res3_t;
         document.getElementById('res-title').style.color = "var(--primary-green)";
         document.getElementById('res-desc').innerHTML = l.res3_d;
+      }
+
+      // [완벽 추적] 결과 조회 (1회 제한)
+      if (!sessionStorage.getItem('result_viewed')) {
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+          'event': '결과_조회',
+          '결과_유형': tierName
+        });
+        sessionStorage.setItem('result_viewed', 'true');
       }
     }
 
@@ -733,7 +757,9 @@
       const shareUrl = encodeURIComponent(window.location.href);
       const shareText = encodeURIComponent("Check out my K-Culture Level! 🩸 #KBloodScan");
       
+      // [완벽 추적] SNS 공유
       window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({'event': '링크_공유', '공유_매체': platform});
       window.dataLayer.push({'event': 'TP-Share'});
 
       if (platform === 'x') {
