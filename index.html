@@ -482,10 +482,16 @@
 
     // [이벤트 유실 및 언어 초기화 방지] 페이지 새로고침을 없애고 소프트 리셋 적용
     function handleRetry() {
-      // 재시도 이벤트 전송 (현재 어떤 언어로 재시도 했는지도 포함)
-      window.dataLayer = window.dataLayer || [];
-      window.dataLayer.push({'event': '재시도', '선택_언어': currentLang});
-      window.dataLayer.push({'event': 'TP-Retry'});
+      // 틱톡 및 GA4 매핑용 태그 폭격 (1세션 1회 제한)
+      if (!sessionStorage.getItem('retry_fired_v3')) {
+        window.dataLayer = window.dataLayer || [];
+        // 틱톡 매핑
+        window.dataLayer.push({'event': 'TP-Retry'});
+        // GA4 매핑
+        window.dataLayer.push({'event': '성공화면 재시도'});
+        window.dataLayer.push({'event': 'GA_재시도'});
+        sessionStorage.setItem('retry_fired_v3', 'true');
+      }
       
       // 상태 초기화 (새로고침 없이 내부 메모리만 초기화)
       step = 0;
@@ -590,8 +596,10 @@
         document.getElementById('copyLinkBtn').innerText = i18nGlobal[l].copy;
         document.getElementById('shareText').innerText = i18nGlobal[l].share;
 
+        // GA4 매핑용 다국어 태그 (세션 중복 제한 없이 자유롭게 발송)
         window.dataLayer = window.dataLayer || [];
         window.dataLayer.push({'event': '언어_변경', '선택_언어': l});
+        window.dataLayer.push({'event': 'GA_다국어 변경 버튼'});
 
         if (step < 5 && document.getElementById('quiz').classList.contains('active')) {
             renderQuiz();
@@ -606,12 +614,15 @@
       isTransitioning = true;
       playSfx('intro');
       
-      // 시작버튼 클릭 이벤트 
-      if (!sessionStorage.getItem('tp_click_fired')) {
+      // 틱톡 시작 버튼 클릭 및 GA4 시작 매핑 (1세션 1회 발송)
+      if (!sessionStorage.getItem('tp_click_fired_v3')) {
         window.dataLayer = window.dataLayer || [];
+        // 틱톡
         window.dataLayer.push({'event': 'TP-ClickButton'});
+        // GA4
+        window.dataLayer.push({'event': '퀴즈시작버튼 클릭'}); 
         if(window.ttq) window.ttq.track('ClickButton');
-        sessionStorage.setItem('tp_click_fired', 'true');
+        sessionStorage.setItem('tp_click_fired_v3', 'true');
       }
 
       const btn = document.getElementById('thumbBtn');
@@ -701,16 +712,22 @@
     }
 
     function runLoading() {
-      // [광고 성과(ROAS) 무결성 보장] 1회 전환 측정
-      if (!localStorage.getItem('roas_secured_v2')) {
+      // 틱톡 및 GA4 완료페이지 ROAS 부풀림 방지 (1세션 1회 발송)
+      if (!sessionStorage.getItem('conversion_fired_v3')) {
         window.dataLayer = window.dataLayer || [];
+        
+        // 틱톡 픽셀 매핑
         window.dataLayer.push({'event': 'SubmitForm'});
+        window.dataLayer.push({'event': 'Tiktok-SubmitForm'}); 
+        // GA4 매핑
+        window.dataLayer.push({'event': 'GA_완료페이지'});
+        window.dataLayer.push({'event': 'GA4 - 성공결과페이지'});
+        
         if (typeof window.ttq !== 'undefined') {
           window.ttq.track('SubmitForm');
         }
-        localStorage.setItem('roas_secured_v2', 'true');
+        sessionStorage.setItem('conversion_fired_v3', 'true');
       }
-      
       showStep('loading');
       setTimeout(showResult, 1500);
     }
@@ -768,13 +785,16 @@
       const shareUrl = encodeURIComponent(window.location.href);
       const shareText = encodeURIComponent("Check out my K-Culture Level! 🩸 #KBloodScan");
       
-      // SNS 공유 전송
-      if (!sessionStorage.getItem('tp_share_fired')) {
-        window.dataLayer = window.dataLayer || [];
-        window.dataLayer.push({'event': 'TP-Share'});
-        if(window.ttq) window.ttq.track('Share');
-        sessionStorage.setItem('tp_share_fired', 'true');
-      }
+      // SNS 공유 다이렉트 전송 (세션 중복 제한 없이 자유롭게 발송)
+      window.dataLayer = window.dataLayer || [];
+      // 틱톡
+      window.dataLayer.push({'event': 'TP-Share'});
+      // GA4 
+      window.dataLayer.push({'event': '공유하기'});
+      window.dataLayer.push({'event': 'GA_링크공유'});
+      window.dataLayer.push({'event': 'GA_SNS공유'});
+
+      if(window.ttq) window.ttq.track('Share');
 
       if (platform === 'x') {
         window.open(`https://twitter.com/intent/tweet?url=${shareUrl}&text=${shareText}`, '_blank');
