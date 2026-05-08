@@ -41,7 +41,7 @@
       
       if (errCount === 0) {
         imgEl.dataset.errorCount = 1;
-        imgEl.src = `https://drive.google.com/thumbnail?id=${id}&sz=w800`;
+        imgEl.src = `https://drive.google.com/thumbnail?id=${id}&sz=w400`;
       } 
       else if (errCount === 1) {
         imgEl.dataset.errorCount = 2;
@@ -191,7 +191,7 @@
       flex-shrink: 1; 
     }
     .img-wrapper { position: absolute; top:0; left:0; width:100%; height:100%; display: flex; justify-content: center; align-items: center;}
-    .img-wrapper img { width:100%; height:100%; object-fit: cover; opacity: 0; transition: opacity 0.3s ease, filter 0.3s ease, transform 0.3s ease; }
+    .img-wrapper img { width:100%; height:100%; object-fit: cover; opacity: 1; transition: opacity 0.3s ease, filter 0.3s ease, transform 0.3s ease; }
     
     .card-label { 
       position: relative; font-size: 2.2rem; font-weight: bold; color: #fff; 
@@ -287,13 +287,13 @@
     <!-- HERO -->
     <div id="hero" class="state-section active">
       <div class="hero-content">
-        <div style="width: 100%; max-width: 280px; display: flex; justify-content: center; margin-bottom: 25px;">
+        <div style="width: 100%; max-width: 380px; display: flex; justify-content: center; margin-bottom: 25px;">
           <img src="https://drive.google.com/thumbnail?id=1A0pE_o-qbQ3tWAXJ-B-ewJQlQ-KHOGPb&sz=w800" 
                data-drive-id="1A0pE_o-qbQ3tWAXJ-B-ewJQlQ-KHOGPb" 
                data-error-count="0" 
                onerror="window.handleImgError(this)" 
                alt="MZANSI CHILL vs K-SPEED" 
-               style="width: 100%; height: auto; max-height: 25vh; object-fit: contain; border-radius: 16px;">
+               style="width: 100%; height: auto; max-height: 40vh; object-fit: contain; border-radius: 16px;">
         </div>
         
         <h2 id="hero-subtitle" class="keep-all">Scan your veins for<br>K-Culture levels</h2>
@@ -325,7 +325,7 @@
       </div>
       
       <h2 id="q-title" class="keep-all">Q1. TIME</h2>
-      <p id="q-sub" class="keep-all">How do you wait for friends?</p> 
+      <p id="q-sub" class="keep-all">How do you reply to a text?</p> 
       
       <div class="quiz-container">
         <!-- SA Card -->
@@ -413,8 +413,19 @@
     let currentLang = 'EN';
     let step = 0, answers = [];
 
+    // 이미지 사전 로딩(Preloading) 배열
+    const preloadedImages = [];
+
     // 페이지 완전 새로고침 시 저장된 언어 불러오기 (GA 발송 없이 조용히 세팅)
     document.addEventListener('DOMContentLoaded', () => {
+        // 백그라운드 이미지 사전 로딩 실행 (네트워크 지연 방지)
+        if (typeof quizData !== 'undefined') {
+            quizData.forEach(d => {
+                const img1 = new Image(); img1.src = `https://drive.google.com/thumbnail?id=${d.ids.sa}&sz=w400`; preloadedImages.push(img1);
+                const img2 = new Image(); img2.src = `https://drive.google.com/thumbnail?id=${d.ids.kr}&sz=w400`; preloadedImages.push(img2);
+            });
+        }
+
         const savedLang = sessionStorage.getItem('saved_lang_v2');
         if (savedLang && savedLang !== 'EN') {
             changeLang(savedLang, true); 
@@ -521,9 +532,9 @@
 
     const quizData = [
       { 
-        EN: { t: "Q1. TIME", s: "How do you wait for friends?", sa: "NOW NOW", kr: "FAST FAST" },
-        ZU: { t: "Q1. ISIKHATHI", s: "Ulinda kanjani abangani?", sa: "MANJE MANJE", kr: "KASHESHA" },
-        AF: { t: "Q1. TYD", s: "Hoe wag jy vir vriende?", sa: "NOU NOU", kr: "VINNIG VINNIG" },
+        EN: { t: "Q1. TIME", s: "How do you reply to a text?", sa: "NOW NOW", kr: "FAST FAST" },
+        ZU: { t: "Q1. ISIKHATHI", s: "Uphendula kanjani umyalezo?", sa: "MANJE MANJE", kr: "KASHESHA" },
+        AF: { t: "Q1. TYD", s: "Hoe antwoord jy op 'n boodskap?", sa: "NOU NOU", kr: "VINNIG VINNIG" },
         ids: { sa: driveIds.q1_sa, kr: driveIds.q1_kr }
       },
       { 
@@ -545,9 +556,9 @@
         ids: { sa: driveIds.q4_sa, kr: driveIds.q4_kr }
       },
       { 
-        EN: { t: "Q5. SPORTS", s: "Support your team!", sa: "VUVUZELA", kr: "CHICKEN & BEER" },
-        ZU: { t: "Q5. EZEMIDLALO", s: "Sekela iqembu lakho!", sa: "VUVUZELA", kr: "INKUKHU KANYE NOBHIYA" },
-        AF: { t: "Q5. SPORT", s: "Ondersteun jou span!", sa: "VUVUZELA", kr: "HOENDER & BIER" },
+        EN: { t: "Q5. SOCCER", s: "How do you enjoy soccer?", sa: "VUVUZELA", kr: "CHICKEN & BEER" },
+        ZU: { t: "Q5. IBHOLA", s: "Ulijabulela kanjani ibhola?", sa: "VUVUZELA", kr: "INKUKHU KANYE NOBHIYA" },
+        AF: { t: "Q5. SOKKER", s: "Hoe geniet jy sokker?", sa: "VUVUZELA", kr: "HOENDER & BIER" },
         ids: { sa: driveIds.q5_sa, kr: driveIds.q5_kr }
       }
     ];
@@ -563,7 +574,7 @@
       ZU: { 
         sub: "Skena imithambo yakho ukuze<br>ubone amazinga e-K-Culture", load: "IHLOLA IGAZI...", tap: "THINTA UKUZE UQALE",
         back: "EMUVA", retry: "ZAMA FUTHI", copy: "KOPISHA ISIXHUNGANISO", share: "YABELANA NGEMIPHUMELA YAKHO",
-        res1_t: "OSINDE EKOREA", res1_d: "Ujwayele ngokuphelele isigqi saseKorea. Kusukela eSeoul 구ya eBusan, ungasinda kalula kumasiko e-K asheshayo nanamandla.",
+        res1_t: "OSINDE EKOREA", res1_d: "Ujwayele ngokuphelele isigqi saseKorea. Kusukela eSeoul ukuya eBusan, ungasinda kalula kumasiko e-K asheshayo nanamandla.",
         res2_t: "UMPHEFUMULO OXUBILE", res2_d: "Ulinganisele ngokuphelele. Uyakwazisa ukuphumula kwaseMzansi, kodwa ungasheshisa futhi ujwayele isigqi saseKorea uma kudingeka.",
         res3_t: "UPHILILE KAKHULU", res3_d: "Umphefumulo waseMzansi ongu-100%. Ubeka ukuthula phambili kanye nendlela yokuphila ye-'Now Now'. Isivinini eseqile saseKorea singaba ukushaqeka okukhulu kwamasiko kuwe!"
       },
@@ -663,17 +674,19 @@
       const imgSa = document.getElementById('img-sa');
       const imgKr = document.getElementById('img-kr');
 
+      // 이전 이미지 잔상 제거를 위해 즉시 투명화 처리
+      imgSa.style.opacity = '0';
       imgSa.dataset.errorCount = "0";
       imgSa.dataset.driveId = d.ids.sa;
-      imgSa.style.opacity = '0';
-      imgSa.onload = function() { this.style.opacity = '0.95'; };
-      imgSa.src = `https://drive.google.com/thumbnail?id=${d.ids.sa}&sz=w800`;
+      imgSa.onload = function() { this.style.opacity = '1'; }; // 로드 완료 시 페이드인
+      imgSa.src = `https://drive.google.com/thumbnail?id=${d.ids.sa}&sz=w400`;
 
+      // 이전 이미지 잔상 제거를 위해 즉시 투명화 처리
+      imgKr.style.opacity = '0';
       imgKr.dataset.errorCount = "0";
       imgKr.dataset.driveId = d.ids.kr;
-      imgKr.style.opacity = '0';
-      imgKr.onload = function() { this.style.opacity = '0.95'; };
-      imgKr.src = `https://drive.google.com/thumbnail?id=${d.ids.kr}&sz=w800`;
+      imgKr.onload = function() { this.style.opacity = '1'; }; // 로드 완료 시 페이드인
+      imgKr.src = `https://drive.google.com/thumbnail?id=${d.ids.kr}&sz=w400`;
     }
 
     function pick(v) {
